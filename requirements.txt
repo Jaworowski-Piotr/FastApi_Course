@@ -1,5 +1,7 @@
-fastapi
-pydantic
-sqlalchemy
-passlib
+fastapi~=0.87.0
+pydantic~=1.10.2
+sqlalchemy~=1.4.44
+passlib~=1.7.4
 bcrypt
+python-multipart
+python-jose

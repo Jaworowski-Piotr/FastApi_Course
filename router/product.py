@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header, Cookie, Form
 from fastapi.responses import Response, HTMLResponse, PlainTextResponse
+from typing import Optional
+"""
 from schemas import UserBase, UserDisplay
 from sqlalchemy.orm import Session
 from db.database import get_db
 from db import db_user
 from typing import List
+"""
 
 router = APIRouter(
     prefix='/product',
@@ -13,18 +16,41 @@ router = APIRouter(
 
 products = ['watch', 'camera', 'phone']
 
+
+@router.post('/new')
+def create_product(name: str = Form(...)):
+    products.append(name)
+    return products
+
 @router.get('/all')
 def get_all_product():
     # return products
     data = " ".join(products)
-    return Response(content=data, media_type='text/plain')
+    response = Response(content=data, media_type='text/plain')
+    response.set_cookie(key="test_cookie", value="test_cookie_value")
+    return response
+
+
+@router.get('/withheader')
+def get_products(
+        response: Response,
+        custom_header: Optional[str] = Header(None),  # We can always declare a list
+        test_cookie: Optional[str] = Cookie(None)
+):
+    if custom_header:
+        response.headers['custom_response_header'] = ", ".join(custom_header)
+    return {
+        "data": products,
+        "custom_header": custom_header,
+        "my_cookie": test_cookie
+    }
 
 
 @router.get('/{id}', responses={
     200: {
         "content": {
             "text/html": {
-                "example" : "<div>Product</div>"
+                "example": "<div>Product</div>"
             }
         },
         "description": "Returns the html for an object"

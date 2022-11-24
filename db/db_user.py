@@ -28,6 +28,15 @@ def get_user(db: Session, id: int):
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'User with ID {id} not found')
+    # I just have forgotten return user but it works anyway
+
+
+def get_user_by_username(db: Session, username: str):
+    if user := db.query(DbUser).filter(DbUser.username == username).first():
+        return user
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'User {username} not found')
 
 
 def update_user(db: Session, id_: int, request: UserBase):

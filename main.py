@@ -1,12 +1,16 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from db import models
 from db.database import engine
-from router import blog_get, blog_post, user, article, product
+from router import blog_get, blog_post, user, article, product, file
+from templates import templates
 from auth import authentication
 
 
 app = FastAPI()
+app.include_router(templates.router)
+app.include_router(file.router)
 app.include_router(authentication.router)
 app.include_router(blog_get.router)
 app.include_router(blog_post.router)
@@ -37,3 +41,6 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+app.mount('/files', StaticFiles(directory='files'), name='files')
+app.mount('/templates/static', StaticFiles(directory='templates/static'), name='static')
